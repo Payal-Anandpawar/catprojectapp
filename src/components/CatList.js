@@ -18,7 +18,7 @@ const COLUMNS = [
 ];
 
 const PAGE_INDEX = 1;
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 function CatListView() {
   const [data, setData] = useState([]);
@@ -171,19 +171,19 @@ function CatListView() {
           <nav className="pagination">
             <button
               type="button"
-              className="btn btn-primary"
+              className="btn btn-primary btn-lg"
               onClick={moveToPrevPage}
               disabled={pageIndex === 1}
             >
-              Previous
+              <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
             </button>
 
             <button
-              className="btn btn-primary paginationbtn"
+              className="btn btn-primary btn-lg paginationbtn"
               onClick={moveToNextPage}
               disabled={!hasNextPage}
             >
-              Next
+              <i class="fa fa-chevron-circle-right" aria-hidden="true"></i>
             </button>
           </nav>
         </div>
