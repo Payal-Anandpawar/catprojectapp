@@ -15,6 +15,22 @@ const COLUMNS = [
     title: "Cat Name",
     field: "name",
   },
+  {
+    title: "Avatar",
+    field: "url",
+    editable: false,
+    render: (rowData) =>
+      rowData?.url == null ? null : (
+        <img
+          src={rowData.url}
+          alt=""
+          border="1"
+          height="45"
+          width="45"
+          style={{ borderRadius: "50%" }}
+        />
+      ),
+  },
 ];
 
 const PAGE_INDEX = 1;
@@ -97,7 +113,9 @@ function CatListView() {
         toast.success("Cat has been saved successfully.", {
           position: toast.POSITION.TOP_CENTER,
         });
-        getData(PAGE_INDEX);
+        setTimeout(() => {
+          getData(PAGE_INDEX);
+        }, 1000);
       })
       .catch(() => {
         toast.error("There is some error while adding new cat.", {
@@ -127,7 +145,6 @@ function CatListView() {
       <div className="col=md-12 container">
         <h3 className="cat-header">List of Cats</h3>
         <hr />
-        <br />
         <MaterialTable
           title="List of Cats"
           fontWeight="fontWeightBold"
@@ -150,7 +167,7 @@ function CatListView() {
               fontWeight: "bold",
             },
             actionsCellStyle: {
-              width: "40%",
+              width: "30%",
             },
           }}
           editable={{
@@ -175,7 +192,7 @@ function CatListView() {
               onClick={moveToPrevPage}
               disabled={pageIndex === 1}
             >
-              <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
+              <i className="fa fa-chevron-circle-left" aria-hidden="true"></i>
             </button>
 
             <button
@@ -183,7 +200,7 @@ function CatListView() {
               onClick={moveToNextPage}
               disabled={!hasNextPage}
             >
-              <i class="fa fa-chevron-circle-right" aria-hidden="true"></i>
+              <i className="fa fa-chevron-circle-right" aria-hidden="true"></i>
             </button>
           </nav>
         </div>

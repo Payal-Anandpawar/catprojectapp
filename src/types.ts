@@ -1,6 +1,7 @@
 export type Cat = Readonly<{
   id: string;
   name: string;
+  url: string | null;
 }>;
 
 export type CatList = ReadonlyArray<Cat>;
