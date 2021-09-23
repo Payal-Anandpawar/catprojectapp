@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MaterialTable from "material-table";
 import CatService from "../services/CatService";
 import { deepTrim } from "../utils/objectUtils";
@@ -17,17 +17,33 @@ const COLUMNS = [
   },
 ];
 
+const PAGE_INDEX = 1;
+const PAGE_SIZE = 10;
+
 function CatListView() {
   const [data, setData] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedCatId, setSelectedCatId] = useState(null);
   const [selectedCatName, setSelectedCatName] = useState(null);
-  const [selectedCatCTime, setSelectedCatCTime] = useState(null);
-  const tableRef = React.createRef();
+  const [pageIndex, setPageIndex] = useState(0);
+  const [hasNextPage, setHasNextPage] = useState(false);
 
-  const getData = async () => {
-    tableRef.current && tableRef.current.onQueryChange();
+  const getData = async (pageIndex) => {
+    CatService.getAllCats({
+      pageNumber: pageIndex,
+      pageSize: PAGE_SIZE,
+      sortBy: "-id",
+    }).then((response) => {
+      const catData = response?.results;
+      setData(catData);
+      setPageIndex(pageIndex);
+      setHasNextPage(response?.metadata.hasNextPage);
+    });
   };
+
+  useEffect(() => {
+    getData(PAGE_INDEX);
+  }, []);
 
   const viewDetailsIcon = () => <i className="fa fa-info-circle"></i>;
 
@@ -39,13 +55,19 @@ function CatListView() {
     setShowDetails(false);
   };
 
+  const moveToNextPage = () => {
+    getData(pageIndex + 1);
+  };
+
+  const moveToPrevPage = () => {
+    getData(pageIndex - 1);
+  };
+
   const getCatDetails = async (catId) => {
-    await CatService.getCatbyId(catId)
+    CatService.getCatbyId(catId)
       .then((response) => {
         setSelectedCatId(response?.id);
         setSelectedCatName(response?.name);
-        const date = new Date(response?.ctime);
-        setSelectedCatCTime(String(date));
         modalCatDetailsOpen();
       })
       .catch(() => {
@@ -71,19 +93,11 @@ function CatListView() {
     const newCatData = deepTrim(newData);
 
     CatService.createCat(newCatData)
-      .then((response) => {
-        const dataToAdd = [...data];
-        dataToAdd.push(newCatData);
-        setData(dataToAdd);
-        toast.success(
-          <span>
-            Cat <b>{response.name}</b> has been saved successfully.
-          </span>,
-          {
-            position: toast.POSITION.TOP_CENTER,
-          }
-        );
-        getData();
+      .then(() => {
+        toast.success("Cat has been saved successfully.", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        getData(PAGE_INDEX);
       })
       .catch(() => {
         toast.error("There is some error while adding new cat.", {
@@ -93,17 +107,13 @@ function CatListView() {
   };
 
   const deleteData = (oldData) => {
-    const catId = oldData.id;
+    const catId = oldData?.id;
     CatService.deleteCat(catId)
       .then(() => {
-        const dataDelete = [...data];
-        const index = oldData.tableData.id;
-        dataDelete.splice(index, 1);
-        setData([...dataDelete]);
         toast.success("Cat has been deleted successfully.", {
           position: toast.POSITION.TOP_CENTER,
         });
-        getData();
+        getData(PAGE_INDEX);
       })
       .catch(() => {
         toast.error("There is some error while deleting cat.", {
@@ -121,57 +131,18 @@ function CatListView() {
         <MaterialTable
           title="List of Cats"
           fontWeight="fontWeightBold"
-          tableRef={tableRef}
           columns={COLUMNS}
-          data={(query) =>
-            new Promise((resolve, reject) => {
-              let url = "http://localhost:10000/v1/cats?";
-              if (query.search) {
-                url += `name=${query.search}&`;
-              }
-              if (query.orderBy) {
-                const order = query.orderDirection === "asc" ? "" : "-";
-                url += `sort_by=${order}${query.orderBy.field}&`;
-              }
-              if (query.filters.length) {
-                const filter = query.filters.map((filter) => {
-                  return `${filter.column.field}${filter.operator}${filter.value}&`;
-                });
-                url += filter.join("");
-              }
-              url += "page_number=" + (query.page + 1);
-              url += "&page_size=" + query.pageSize;
-              CatService.getAllCats(url).then((result) => {
-                const catList = result;
-                CatService.getCatsCount().then((response) => {
-                  resolve({
-                    data: catList,
-                    page: query.page,
-                    totalCount: response,
-                  });
-                });
-              });
-            })
-          }
+          data={data}
           actions={[
             (rowData) => ({
               icon: viewDetailsIcon,
               tooltip: "View Cat Details",
               onClick: (event, rowData) => getCatDetails(rowData.id),
             }),
-            {
-              icon: "refresh",
-              tooltip: "Refresh Data",
-              isFreeAction: true,
-              onClick: () =>
-                tableRef.current && tableRef.current.onQueryChange(),
-            },
           ]}
           options={{
-            pageSize: 5,
-            pageSizeOptions: [5, 10, 20, 30],
             toolbar: true,
-            paging: true,
+            paging: false,
             showTitle: false,
             headerStyle: {
               backgroundColor: "#01579b",
@@ -181,8 +152,6 @@ function CatListView() {
             actionsCellStyle: {
               width: "40%",
             },
-            debounceInterval: 1000,
-            filtering: true,
           }}
           editable={{
             onRowAdd: (newData) =>
@@ -197,24 +166,39 @@ function CatListView() {
               }),
           }}
         />
+        <br />
+        <div>
+          <nav className="pagination">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={moveToPrevPage}
+              disabled={pageIndex === 1}
+            >
+              Previous
+            </button>
+
+            <button
+              className="btn btn-primary paginationbtn"
+              onClick={moveToNextPage}
+              disabled={!hasNextPage}
+            >
+              Next
+            </button>
+          </nav>
+        </div>
+        <br />
       </div>
 
       <div id="show-cat-details-popup">
         <Modal show={showDetails} handleClose={() => modalCatDetailsClose()}>
-          <h4
-            className="font-weight-bold p-3"
-            style={{
-              color: "#01579b",
-              fontWeight: "bold",
-            }}
-          >
+          <h4 className="font-weight-bold p-3 show-details-header">
             Cat Details
           </h4>
           <hr />
           <div>
             <h6 className="p-3">Id : {selectedCatId}</h6>
             <h6 className="p-3">Name : {selectedCatName}</h6>
-            <h6 className="p-3">Created Time : {selectedCatCTime}</h6>
           </div>
         </Modal>
       </div>

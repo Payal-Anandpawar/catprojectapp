@@ -5,6 +5,15 @@ export type Cat = Readonly<{
 
 export type CatList = ReadonlyArray<Cat>;
 
+export type PageMetadata = Readonly<{
+  hasNextPage: boolean;
+}>;
+
+export type PagedResult = Readonly<{
+  results: CatList;
+  metadata: PageMetadata;
+}>;
+
 export type CatMetaData = Readonly<{
   id: string;
   name: string;

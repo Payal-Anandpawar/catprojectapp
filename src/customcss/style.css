@@ -7,6 +7,7 @@
   
   .cat-app-nav{
       font-weight: bold;
+      color: white !important;
   }
   
   .MuiTypography-h6{
@@ -27,7 +28,7 @@
   #show-cat-details-popup .modal-container {
     position: absolute;
     width: 30%;
-    height: 50%;
+    height: 40%;
     background: #ffffff;
     left: 32%;
     top: 20%;
@@ -65,4 +66,11 @@
     color: white;
   }
 
-  
+  .paginationbtn{
+    margin-left: 5px !important;
+  }
+
+  .show-details-header{
+    color: #01579b !important;
+    font-weight: bold !important;
+  }

@@ -1,12 +1,12 @@
 import "./App.css";
-import CatListView from "./components/CatListView";
+import CatList from "./components/CatList";
 import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <>
       <Navbar />
-      <CatListView />
+      <CatList />
     </>
   );
 }
