@@ -10,16 +10,16 @@ export type PageMetadata = Readonly<{
   hasNextPage: boolean;
 }>;
 
-export type PagedResult = Readonly<{
-  results: CatList;
+export type PagedResult<T> = Readonly<{
+  results: T;
   metadata: PageMetadata;
 }>;
 
 export type CatMetaData = Readonly<{
   id: string;
   name: string;
-  cTime: string;
-  mTime: string;
+  ctime: string;
+  mtime: string;
 }>;
 
 export type ResultCount = Readonly<{

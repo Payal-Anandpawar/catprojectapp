@@ -2,6 +2,7 @@ import axios from "axios";
 import {
   PagedResult,
   CatMetaData,
+  CatList,
   UnsavedCat,
   ResultCount
 } from "../types";
@@ -16,7 +17,7 @@ const getAllCats = async ({
   pageNumber: number;
   pageSize: number;
   sortBy: string;
-}): Promise<PagedResult> => {
+}): Promise<PagedResult<CatList>> => {
   const url = `${BASE_URL}?sort_by=${sortBy}&page_number=${pageNumber}&page_size=${pageSize}`
   const { data } = await axios.get(url);
   const list = deepCamelCaseKeys(data);
