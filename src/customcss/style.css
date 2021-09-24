@@ -1,0 +1,76 @@
+.cat-header {
+  margin-top:25px !important;
+  color: #3F66B0;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: bold;
+  }
+  
+  .cat-app-nav{
+      font-weight: bold;
+      color: white !important;
+  }
+  
+  .MuiTypography-h6{
+      font-weight: bold !important;
+      color:#3F66B0 !important;
+  }
+  
+  .MTableHeader-header-14{
+      text-align: left !important;
+      font-weight: bold !important;
+      background-color: red;
+  }
+  
+  #show-cat-details-popup .modal {
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  #show-cat-details-popup .modal-container {
+    position: absolute;
+    width: 30%;
+    height: 40%;
+    background: #ffffff;
+    left: 32%;
+    top: 20%;
+    padding: 20px;
+  }
+
+  .modal-float-right{
+    float: right !important;
+  }
+
+  .mat-header-cell, .mat-cell {
+    justify-content: center;
+  }
+
+  table {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  table td, table th {
+    border: 1px solid #ddd;
+    padding: 5px;
+  }
+  
+  table tr:nth-child(even){background-color: #f2f2f2;}
+  
+  table tr:hover {background-color: #ddd;}
+  
+  table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+    background-color: #0d6efd;
+    color: white;
+  }
+
+  .paginationbtn{
+    margin-left: 5px !important;
+  }
+
+  .show-details-header{
+    color: #01579b !important;
+    font-weight: bold !important;
+  }
